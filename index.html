@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movistar Team · Digital Dashboard 2025 vs 2026 · Jan 1 – Ago 16</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+  :root{
+    --cyan:#50AEE5;--cyan-dark:#1B8FCB;--cyan-deep:#0E6BA8;
+    --green:#1FA463;--red:#E5484D;
+    --bg:#F2FAFE;--surface:#FFFFFF;--surface2:#E7F4FC;
+    --border:rgba(80,174,229,0.28);--shadow:0 4px 18px rgba(80,174,229,0.10);
+    --text:#0C2A40;--muted:#6E89A0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Roboto',Helvetica,sans-serif;background:var(--bg);color:var(--text);padding:20px;}
+  .header{display:flex;align-items:center;gap:18px;margin-bottom:24px;padding:18px 20px;border-radius:16px;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--border);flex-wrap:wrap;}
+  .header .logo-mark{height:46px;width:auto;flex-shrink:0;}
+  .header-text{border-left:2px solid var(--border);padding-left:16px;}
+  .header-text h1{font-weight:900;font-size:26px;letter-spacing:1px;color:var(--cyan-deep);}
+  .header-text p{font-size:12px;color:var(--muted);margin-top:2px;}
+  .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+  .tab{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all 0.2s;}
+  .tab:hover{color:var(--cyan-deep);border-color:var(--cyan);}
+  .tab.active{background:var(--cyan);color:#fff;border-color:var(--cyan);font-weight:700;box-shadow:0 2px 8px rgba(80,174,229,0.35);}
+  .panel{display:none;}.panel.active{display:block;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+  .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
+  .kpi-card.up::before{background:var(--green);}.kpi-card.down::before{background:var(--red);}.kpi-card.neutral::before{background:var(--cyan);}
+  .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+  .kpi-values{display:flex;gap:10px;align-items:flex-end;margin-bottom:8px;}
+  .kpi-val{display:flex;flex-direction:column;}
+  .kpi-year{font-size:10px;color:var(--muted);margin-bottom:2px;}
+  .kpi-num{font-weight:900;font-size:20px;line-height:1;}
+  .kpi-num.y25{color:#9DB2C4;}.kpi-num.y26{color:var(--cyan-deep);}.kpi-num.single{color:var(--cyan-deep);font-size:22px;}
+  .kpi-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;}
+  .kpi-badge.up{background:rgba(31,164,99,0.14);color:var(--green);}
+  .kpi-badge.down{background:rgba(229,72,77,0.14);color:var(--red);}
+  .kpi-badge.neutral{background:rgba(80,174,229,0.16);color:var(--cyan-dark);}
+  .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow);}
+  .section-title{font-weight:900;font-size:15px;letter-spacing:1px;color:var(--cyan-deep);margin-bottom:14px;}
+  .bar-row{display:grid;gap:8px;align-items:center;margin-bottom:10px;}
+  .bar-row.double{grid-template-columns:150px 1fr 1fr 64px;}
+  .bar-row.single{grid-template-columns:160px 1fr 64px;}
+  .bar-label{font-size:11px;color:var(--muted);text-align:right;}
+  .bar-wrap{position:relative;height:26px;background:var(--surface2);border-radius:5px;overflow:hidden;}
+  .bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;display:flex;align-items:center;padding-left:7px;font-size:10px;font-weight:600;white-space:nowrap;}
+  .bar-fill.y25{background:#C9DDEC;color:#4E6679;}
+  .bar-fill.y26{background:linear-gradient(90deg,var(--cyan-dark),var(--cyan));color:#fff;}
+  .bar-pct{font-size:11px;font-weight:600;text-align:right;}
+  .bar-pct.up{color:var(--green);}.bar-pct.down{color:var(--red);}.bar-pct.neutral{color:var(--cyan-dark);}
+  .legend{display:flex;gap:14px;margin-bottom:14px;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+  .legend-dot{width:10px;height:10px;border-radius:3px;}
+  .legend-dot.y25{background:#C9DDEC;}.legend-dot.y26{background:linear-gradient(90deg,var(--cyan-dark),var(--cyan));}
+  .insight{background:rgba(80,174,229,0.09);border:1px solid rgba(80,174,229,0.30);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:14px;font-size:13px;line-height:1.6;}
+  .insight strong{color:var(--cyan-deep);}
+  .note{background:rgba(255,176,32,0.10);border:1px solid rgba(255,176,32,0.30);border-left:3px solid #F5A623;border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.5;}
+  .note strong{color:#C77F0A;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+  @media(max-width:650px){.two-col,.three-col{grid-template-columns:1fr;}.bar-row.double{grid-template-columns:100px 1fr 1fr 54px;}.bar-row.single{grid-template-columns:110px 1fr 54px;}}
+  .aud-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .aud-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+  .g-bars{display:flex;flex-direction:column;gap:7px;}
+  .g-row{display:flex;align-items:center;gap:7px;}
+  .g-label{font-size:11px;width:58px;}
+  .g-wrap{flex:1;height:19px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+  .g-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:5px;font-size:10px;font-weight:600;}
+  .g-fill.male{background:var(--cyan-deep);color:#fff;}
+  .g-fill.female{background:var(--cyan);color:#fff;}
+  .c-list{display:flex;flex-direction:column;gap:5px;}
+  .c-row{display:flex;align-items:center;gap:7px;font-size:11px;}
+  .c-name{width:auto;min-width:96px;flex-shrink:0;color:var(--text);}
+  .c-wrap{flex:1;height:14px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+  .c-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan-dark),var(--cyan));}
+  .c-pct{font-size:10px;font-weight:600;width:40px;text-align:right;color:var(--cyan-deep);flex-shrink:0;}
+  .plat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;}
+  .plat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;box-shadow:var(--shadow);}
+  .plat-name{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+  .plat-main{font-weight:900;font-size:18px;color:var(--cyan-deep);margin-bottom:3px;}
+  .plat-sub{font-size:10px;color:var(--muted);margin-bottom:5px;}
+  .tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;}
+  .tag.up{background:rgba(31,164,99,0.14);color:var(--green);}
+  .tag.down{background:rgba(229,72,77,0.14);color:var(--red);}
+  .yt-split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  @media(max-width:500px){.yt-split{grid-template-columns:1fr;}}
+  .hl-box{border-radius:12px;padding:14px;border:1px solid;}
+  .hl-box.green{background:rgba(31,164,99,0.07);border-color:rgba(31,164,99,0.28);}
+  .hl-box.blue{background:rgba(80,174,229,0.09);border-color:rgba(80,174,229,0.30);}
+  .hl-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+  .green .hl-label{color:var(--green);}.blue .hl-label{color:var(--cyan-dark);}
+  .hl-num{font-weight:900;font-size:20px;margin-bottom:4px;}
+  .hl-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+  .fb-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .fb-icon{width:36px;height:36px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;font-weight:900;color:var(--cyan-deep);}
+  .fb-info h3{font-size:15px;color:var(--text);}
+  .fb-info p{font-size:11px;color:var(--muted);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <svg class="logo-mark" viewBox="0 0 988 319" xmlns="http://www.w3.org/2000/svg">
+<g fill="#01baf2">
+<path d="m347.16 1.11c6.1-1.65 12.34-0.18 18.37 1 12.12 2.74 22.62 10.4 30.39 19.91 7.24 8.7 12.33 18.96 16.42 29.46 14.53 36.96 18.93 77.05 18.89 116.51-0.44 11.71-1.07 23.42-2.57 35.05-1.21 10.49-2.49 21.04-5.49 31.19-2.85 8.94-8.75 17.47-17.53 21.35-8.02 3.66-18.47 1.9-24.19-5-5.63-6.74-6.91-16.01-6.67-24.51 2.02-25.65 6.16-51.29 4.49-77.09-0.74-6.81-1.8-13.88-5.6-19.74-4.6-7.22-14.05-11.47-22.42-8.95-6.63 1.84-12.19 6.24-16.83 11.17-8.04 8.52-13.88 18.84-18.77 29.41-12.27 27.1-20.42 55.78-29.42 84.07-5.35 17.32-14.03 34.42-28.61 45.76-15.62 12.25-36.1 16.24-55.56 16.11-18.91 0.2-37.57-7.64-51.13-20.74-7.52-7.05-13.61-15.48-18.68-24.43-12.55-21.25-24.62-42.78-36.93-64.18-4.17-7.21-8.4-14.56-14.42-20.42-3.44-3.23-7.99-6.07-12.91-5.44-4.04 0.62-8.19 2.23-10.79 5.52-2.85 3.57-4.02 8.14-4.59 12.58-0.78 8.07-0.08 16.2 1.5 24.13 4.32 22.24 12.63 43.42 18.27 65.31 1.98 8.06 4.08 16.6 1.73 24.81-1.7 6.7-7.15 12.9-14.18 13.96-5.33 0.08-11.07 0.9-15.99-1.7-7.81-3.8-11.96-11.97-15.78-19.34-7.36-16.86-12.89-34.47-17.51-52.26-4.87-19.55-8.76-39.46-9.47-59.64-0.26-4.32-1.17-8.62-0.82-12.96 1.25-10.64 1.26-21.4 3.15-31.97 3.53-21.98 8.91-44.08 19.81-63.67 7.32-13.12 17.68-25 31.16-31.99 14.52-7.51 32.19-9.08 47.65-3.63 9.66 3.42 17.67 10.12 24.8 17.29 7.08 6.7 12.83 14.62 18.44 22.54 8.45 12.02 16.4 24.38 24.13 36.88 5.03 8.39 10.38 16.74 17.48 23.56 6.66 6.48 14.86 11.8 24.13 13.44 10.32 1.71 21.52-0.89 29.45-7.87 6.89-5.87 11.32-14 14.69-22.27 10.71-26.11 20.62-52.57 32.87-78.02 11.41-22.87 33.09-41.88 59.04-45.19z"/>
+<path d="m606.74 75.98c9.81-1.62 21.09-1.49 29.14 5.17 7.78 6.53 9.96 17.22 10.4 26.89 0.2 9.98-0.84 20.86-7.22 28.99-4.96 6.35-13.19 8.93-20.97 9.27-8.41 0.33-17.68-1.32-23.76-7.62-6.4-6.49-8.19-15.97-8.67-24.74-0.3-9.63 0.62-19.96 6.16-28.16 3.39-5.14 9.01-8.4 14.92-9.8m5.68 11.64c-4.82 0.92-8.17 5.26-9.16 9.88-1.99 8.69-2.01 17.88 0.02 26.56 0.95 4.43 4.14 8.76 8.84 9.53 4.75 0.74 10.57 0.53 13.73-3.68 3.96-5.39 3.93-12.48 4.26-18.88-0.31-6.49-0.22-13.61-4.04-19.19-3.02-4.3-8.81-5.15-13.65-4.22z"/>
+<path d="m769.6 75.51c8.46-0.83 17.1-0.23 25.29 2.14-0.39 4.03-1.22 8.01-2.34 11.9-7.02-2.02-14.44-3.02-21.7-1.93-3.39 0.6-6.14 3.94-5.51 7.45 0.03 3.07 2.92 5 5.45 6.1 7.78 3.23 16.95 3.75 23.49 9.54 6.31 5.53 7.33 15.15 4.49 22.7-2.83 7.21-10.34 11.52-17.79 12.34-10.17 1.32-20.8 0.35-30.43-3.22 0.97-3.77 1.72-7.59 2.31-11.43 8.92 1.94 18.31 4.8 27.39 2.05 4.64-1.21 6.96-7.59 3.91-11.35-2.96-2.89-7.26-3.59-11.05-4.78-6.06-1.8-12.74-3.17-17.33-7.85-5.82-5.62-6.54-14.94-3.75-22.21 2.87-7 10.5-10.43 17.57-11.45z"/>
+<path d="m561.71 76.46c3.99-0.04 7.98-0.03 11.98-0.04 0.03 22.79-0.01 45.57 0.03 68.36-4.73 0-9.46-0.02-14.18 0.06-0.22-12.99 0.07-25.97-0.15-38.95-5.15 7.49-9.1 15.76-14.3 23.21-3.86 0.46-7.78 0.09-11.66 0.24-5.15-7.66-9.23-16.02-14.67-23.48-0.36 12.95-0.12 25.92-0.13 38.88-4.33 0.05-8.67 0.04-13 0.08-0.18-22.78-0.06-45.57-0.08-68.36 4.15-0.05 8.29-0.06 12.44 0.07 5.83 10.58 11.89 21.03 17.76 31.59 1.18 2.03 2.09 4.32 3.91 5.89 7.55-12.39 14.65-25.07 22.05-37.55z"/>
+<path d="m651.07 76.41c5.51 0.03 11.02 0.05 16.53 0 5.43 16.27 10.48 32.66 15.88 48.93 5.71-16.06 9.88-32.66 15.09-48.9 5.06 0 10.11-0.01 15.17 0.01-7.48 22.76-15.17 45.45-22.54 68.24-5.53 0.16-11.06 0.14-16.58 0.01-7.69-22.82-15.93-45.45-23.55-68.29z"/>
+<path d="m722.5 76.5c5.18-0.1 10.36-0.05 15.55-0.11 0.38 22.79 0.16 45.6 0.11 68.4-5.19-0.01-10.37-0.02-15.55 0.02-0.21-22.76 0.01-45.54-0.11-68.31z"/>
+<path d="m804.52 76.44c19.54-0.03 39.08 0.04 58.62-0.04-0.39 3.73-0.62 7.47-0.95 11.2-6.88 0.09-13.77 0.07-20.65 0.01-0.23 19-0.13 38.02-0.05 57.03-5.23 0.25-10.47 0.12-15.7 0.16-0.3-19.07 0.13-38.14-0.21-57.21-7.02 0.11-14.04 0.06-21.05 0.04 0.01-3.73 0-7.46-0.01-11.19z"/>
+<path d="m883.19 76.42c5.72 0.03 11.46-0.01 17.19 0.04 8.23 22.76 16.48 45.51 24.63 68.3-5.58 0.04-11.15 0.05-16.72-0.02-1.95-5.74-3.58-11.6-5.88-17.21-7.26 0.13-14.52 0.08-21.77 0.03-2.03 5.64-3.63 11.42-5.37 17.15-5.02 0.11-10.05 0.12-15.06-0.01 7.85-22.69 15.22-45.55 22.98-68.28m6.93 19.36c-1.47 7-4.13 13.68-5.97 20.59 4.87-0.01 9.75 0 14.62-0.01-2.12-7.47-5.05-14.68-6.99-22.2-0.57 0.53-1.12 1.07-1.66 1.62z"/>
+<path d="m933.06 76.4c9.65 0.15 19.31-0.15 28.96 0.18 6.13 0.22 12.92 1.32 17.24 6.12 5 5.46 5.49 13.48 4.43 20.45-0.97 6.28-5.15 11.72-10.72 14.67 4.01 9.33 9.8 17.79 14.23 26.94-5.43-0.01-10.85 0.14-16.26-0.01-1.42 0.23-1.82-1.4-2.42-2.29-3.66-7.42-7.61-14.69-11.11-22.19-2.97-0.16-5.95-0.16-8.91-0.07 0.08 8.21 0.13 16.43-0.02 24.64-5.2-0.09-10.4-0.04-15.59-0.06 0-22.79-0.34-45.6 0.17-68.38m15.46 32.28c4.52-0.03 9.17 0.51 13.62-0.64 3.28-0.77 5.66-3.75 5.97-7.07 0.49-4.02 0.59-9.34-3.37-11.7-4.96-2.26-10.63-1.66-15.92-1.48-0.68 6.93-0.03 13.93-0.3 20.89z"/>
+<path d="m499.5 187.67c0.03-3.73 0.03-7.47 0.09-11.2 19.57 0.06 39.14-0.04 58.7 0.05-0.49 3.72-0.83 7.46-1.19 11.2-6.94 0.03-13.87-0.11-20.8 0.1 0.03 19.01 0.03 38.02 0 57.02-5.19 0.07-10.37 0.1-15.56 0-0.15-19-0.07-38-0.04-57-7.06-0.27-14.13-0.03-21.2-0.17z"/>
+<path d="m566.34 244.83c0.12-22.79-0.11-45.59 0.1-68.38 15.38 0.11 30.75-0.04 46.13 0.06-0.38 3.72-0.85 7.43-1.15 11.16-9.75 0.13-19.5-0.05-29.24 0.1-0.35 5.6-0.35 11.2 0.16 16.79 7.72-0.19 15.44-0.15 23.16-0.03-0.03 3.88-0.01 7.77-0.08 11.66-7.76 0.05-15.52 0.06-23.27-0.02-0.02 5.83-0.07 11.66 0.05 17.49 10.3-0.12 20.61-0.1 30.91-0.03 0.07 3.74 0.07 7.48 0.01 11.22-15.59 0.05-31.19 0-46.78-0.02z"/>
+<path d="m642.83 176.52c5.75-0.04 11.51-0.07 17.27 0.02 8.2 22.8 16.39 45.59 24.69 68.35-5.5 0.13-11.12 0.76-16.54-0.16-2.57-5.46-3.76-11.46-6.02-17.06-7.25-0.02-14.5 0.1-21.74-0.09-2.42 5.55-3.45 11.58-5.76 17.16-4.83 0.9-9.81 0.19-14.69 0.3 7.37-22.92 15.23-45.67 22.79-68.52m8.03 17.28c-2.49 7.46-4.76 14.99-7 22.53 4.82 0.16 9.66 0.16 14.49 0.02-2.28-7.58-4.64-15.16-7.49-22.55z"/>
+<path d="m692.54 244.73c0.26-22.69-0.22-45.41 0.24-68.09 4.06-0.33 8.15-0.13 12.23-0.12 5.8 10.37 11.69 20.68 17.48 31.05 1.31 2.26 2.36 4.75 4.36 6.53 7.44-12.47 14.6-25.11 22.01-37.6 3.93 0 7.86 0 11.8-0.08 0.31 22.8-0.01 45.61 0.15 68.42-4.75 0.02-9.49 0.01-14.24 0.04-0.12-12.96-0.01-25.92-0.04-38.89-5.15 7.58-9.35 15.74-14.34 23.41-3.85-0.05-7.71-0.06-11.56 0.06-5.33-7.46-9-16.02-14.76-23.17-0.37 12.85-0.07 25.72-0.14 38.58-4.4 0.26-8.8 0.06-13.19-0.14z"/>
+</g>
+</svg>
+  <div class="header-text">
+    <h1>MOVISTAR TEAM · DIGITAL DASHBOARD</h1>
+    <p>1 ene – 16 ago · 2025 vs 2026 · Fuente: Metricool</p>
+    <p style="font-size:10px;color:var(--muted);margin-top:1px;">Última actualización: 18 ago 2026, 09:30h</p>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">Overview</div>
+  <div class="tab" onclick="showTab('instagram')">Instagram</div>
+  <div class="tab" onclick="showTab('facebook')">Facebook</div>
+  <div class="tab" onclick="showTab('twitter')">Twitter/X</div>
+  <div class="tab" onclick="showTab('youtube')">YouTube</div>
+  <div class="tab" onclick="showTab('tiktok')">TikTok</div>
+  <div class="tab" onclick="showTab('linkedin')">LinkedIn</div>
+  <div class="tab" onclick="showTab('audience')">Audience</div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="panel active" id="panel-overview">
+  <div class="kpi-grid">
+    <div class="kpi-card up">
+      <div class="kpi-label">Seguidores totales</div>
+      <div class="kpi-values">
+        <div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">1.61M</span></div>
+        <div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">1.64M</span></div>
+      </div>
+      <span class="kpi-badge up">▲ 1.4%</span>
+    </div>
+    <div class="kpi-card down">
+      <div class="kpi-label">Impresiones/Views totales</div>
+      <div class="kpi-values">
+        <div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">152.8M</span></div>
+        <div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">123.0M</span></div>
+      </div>
+      <span class="kpi-badge down">▼ 19.5%</span>
+    </div>
+    <div class="kpi-card up">
+      <div class="kpi-label">Publicaciones totales</div>
+      <div class="kpi-values">
+        <div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">4,350</span></div>
+        <div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">6,183</span></div>
+      </div>
+      <span class="kpi-badge up">▲ 42.1%</span>
+    </div>
+    <div class="kpi-card down">
+      <div class="kpi-label">Interacciones totales</div>
+      <div class="kpi-values">
+        <div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">4.80M</span></div>
+        <div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">2.81M</span></div>
+      </div>
+      <span class="kpi-badge down">▼ 41.4%</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">REPARTO POR PLATAFORMA (SEGUIDORES, 2026)</div>
+    <div class="plat-grid">
+      <div class="plat-card"><div class="plat-name">Instagram</div><div class="plat-main">740.6K</div><div class="plat-sub">45.3% del total</div><span class="tag up">▲ 0.3%</span></div>
+      <div class="plat-card"><div class="plat-name">Facebook</div><div class="plat-main">670.1K</div><div class="plat-sub">41.0% del total</div><span class="tag up">▲ 0.7%</span></div>
+      <div class="plat-card"><div class="plat-name">YouTube</div><div class="plat-main">119.0K</div><div class="plat-sub">7.3% del total</div><span class="tag up">▲ 3.5%</span></div>
+      <div class="plat-card"><div class="plat-name">TikTok</div><div class="plat-main">93.3K</div><div class="plat-sub">5.7% del total</div><span class="tag up">▲ 12.5%</span></div>
+      <div class="plat-card"><div class="plat-name">LinkedIn</div><div class="plat-main">12.2K</div><div class="plat-sub">0.7% del total</div><span class="tag up">▲ 13.7%</span></div>
+      <div class="plat-card"><div class="plat-name">Twitter/X</div><div class="plat-main">—</div><div class="plat-sub">Sin datos (API cerrada)</div></div>
+    </div>
+  </div>
+
+  <div class="insight"><strong>Key read:</strong> la comunidad total crece un <strong>+1.4%</strong> interanual y las publicaciones se disparan un <strong>+42.1%</strong>, pero impresiones (<strong>−19.5%</strong>) e interacciones (<strong>−41.4%</strong>) bajan frente a 2025. La causa principal es un <strong>efecto base</strong>: en julio de 2025 TikTok tuvo varios días virales (más de 10M y 17M de views en jornadas puntuales) que inflaron el acumulado del año pasado. Sin ese pico, el crecimiento subyacente en Instagram (views +14.0%) y LinkedIn (impresiones +179.9%) es sólido.</div>
+  <div class="note"><strong>Nota:</strong> Twitter/X no reporta impresiones ni interacciones desde 2023 por el cierre de acceso de la API; solo aparecen a 0 en los totales. LinkedIn no tiene desglose por país, solo por área metropolitana.</div>
+</div>
+
+<!-- INSTAGRAM -->
+<div class="panel" id="panel-instagram">
+  <div class="fb-header"><div class="fb-icon">IG</div><div class="fb-info"><h3>Instagram</h3><p>@movistar_team · 1 ene – 16 ago</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card neutral"><div class="kpi-label">Seguidores</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">738.5K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">740.5K</span></div></div><span class="kpi-badge up">▲ 0.3%</span></div>
+    <div class="kpi-card up"><div class="kpi-label">Publicaciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">2,308</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">3,129</span></div></div><span class="kpi-badge up">▲ 35.6%</span></div>
+    <div class="kpi-card up"><div class="kpi-label">Visualizaciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">87.6M</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">99.8M</span></div></div><span class="kpi-badge up">▲ 14.0%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Interacciones en posts</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">2.52M</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">1.74M</span></div></div><span class="kpi-badge down">▼ 31.2%</span></div>
+  </div>
+  <div class="section">
+    <div class="section-title">EVOLUCIÓN AÑO CONTRA AÑO</div>
+    <div class="legend"><div class="legend-item"><span class="legend-dot y25"></span>2025</div><div class="legend-item"><span class="legend-dot y26"></span>2026</div></div>
+    <div class="bar-row double"><div class="bar-label">Interacciones reels</div><div class="bar-wrap"><div class="bar-fill y25" style="width:100%">844.5K</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:88%">742.6K</div></div><div class="bar-pct down">▼ 12.1%</div></div>
+    <div class="bar-row double"><div class="bar-label">Comentarios reels</div><div class="bar-wrap"><div class="bar-fill y25" style="width:26%">7,086</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">27,180</div></div><div class="bar-pct up">▲ 283.6%</div></div>
+    <div class="bar-row double"><div class="bar-label">Compartidos reels</div><div class="bar-wrap"><div class="bar-fill y25" style="width:12%">4,471</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">35,812</div></div><div class="bar-pct up">▲ 701.0%</div></div>
+    <div class="bar-row double"><div class="bar-label">Guardados reels</div><div class="bar-wrap"><div class="bar-fill y25" style="width:91%">11,577</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">12,716</div></div><div class="bar-pct up">▲ 9.8%</div></div>
+    <div class="bar-row double"><div class="bar-label">Stories publicadas</div><div class="bar-wrap"><div class="bar-fill y25" style="width:69%">1,738</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">2,532</div></div><div class="bar-pct up">▲ 45.7%</div></div>
+    <div class="bar-row double"><div class="bar-label">Impresiones stories</div><div class="bar-wrap"><div class="bar-fill y25" style="width:100%">27.4M</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:96%">26.5M</div></div><div class="bar-pct down">▼ 3.5%</div></div>
+  </div>
+  <div class="insight"><strong>Key read:</strong> Instagram es la red más grande de la comunidad (<strong>740.5K</strong>) y la que más publica (<strong>3,129</strong> piezas, +35.6%). Las views suben un sólido <strong>+14.0%</strong>, y el salto en comentarios (<strong>+284%</strong>) y compartidos de reels (<strong>+701%</strong>) sugiere contenido con mucho más "reach" orgánico este año, aunque las interacciones directas en el feed (likes/comments de posts clásicos) bajan <strong>−31.2%</strong>, reflejo del giro del algoritmo hacia reels.</div>
+  <div class="note"><strong>Nota:</strong> el balance de seguidores puede aparecer negativo puntualmente por las purgas de cuentas inactivas/bots que hace Instagram; no es pérdida real de comunidad.</div>
+</div>
+
+<!-- FACEBOOK -->
+<div class="panel" id="panel-facebook">
+  <div class="fb-header"><div class="fb-icon">FB</div><div class="fb-info"><h3>Facebook</h3><p>Movistar Team · 1 ene – 16 ago</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card neutral"><div class="kpi-label">Seguidores</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">665.4K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">670.1K</span></div></div><span class="kpi-badge up">▲ 0.7%</span></div>
+    <div class="kpi-card up"><div class="kpi-label">Publicaciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">1,744</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">2,823</span></div></div><span class="kpi-badge up">▲ 61.9%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Impresiones en posts</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">23.4M</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">13.0M</span></div></div><span class="kpi-badge down">▼ 44.6%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Interacciones en posts</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">1.67M</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">871.3K</span></div></div><span class="kpi-badge down">▼ 47.9%</span></div>
+  </div>
+  <div class="section">
+    <div class="section-title">EVOLUCIÓN AÑO CONTRA AÑO</div>
+    <div class="legend"><div class="legend-item"><span class="legend-dot y25"></span>2025</div><div class="legend-item"><span class="legend-dot y26"></span>2026</div></div>
+    <div class="bar-row double"><div class="bar-label">Seguidores ganados</div><div class="bar-wrap"><div class="bar-fill y25" style="width:77%">9,594</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">12,417</div></div><div class="bar-pct up">▲ 29.4%</div></div>
+    <div class="bar-row double"><div class="bar-label">Seguidores perdidos</div><div class="bar-wrap"><div class="bar-fill y25" style="width:100%">5,706</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:84%">4,819</div></div><div class="bar-pct up">▼ 15.5%</div></div>
+    <div class="bar-row double"><div class="bar-label">Reacciones en posts</div><div class="bar-wrap"><div class="bar-fill y25" style="width:100%">370.4K</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:55%">203.4K</div></div><div class="bar-pct down">▼ 45.1%</div></div>
+    <div class="bar-row double"><div class="bar-label">Reels publicados</div><div class="bar-wrap"><div class="bar-fill y25" style="width:33%">74</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">224</div></div><div class="bar-pct up">▲ 202.7%</div></div>
+    <div class="bar-row double"><div class="bar-label">Interacciones reels</div><div class="bar-wrap"><div class="bar-fill y25" style="width:48%">101.1K</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">209.4K</div></div><div class="bar-pct up">▲ 107.0%</div></div>
+    <div class="bar-row double"><div class="bar-label">Stories publicadas</div><div class="bar-wrap"><div class="bar-fill y25" style="width:56%">1,252</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">2,219</div></div><div class="bar-pct up">▲ 77.2%</div></div>
+  </div>
+  <div class="insight"><strong>Key read:</strong> Facebook casi duplica su ritmo de publicación (<strong>+61.9%</strong>, con foco en reels: +202.7% en piezas y +107.0% en interacciones) pero las impresiones (<strong>−44.6%</strong>) y reacciones clásicas (<strong>−45.1%</strong>) caen con fuerza, señal de que el feed tradicional pierde alcance frente a formatos cortos. La captación de seguidores mejora (+29.4%) y la fuga se reduce (−15.5%), así que la comunidad neta crece de forma más sana.</div>
+</div>
+
+<!-- TWITTER/X -->
+<div class="panel" id="panel-twitter">
+  <div class="fb-header"><div class="fb-icon">X</div><div class="fb-info"><h3>Twitter/X</h3><p>Movistar Team · 1 ene – 16 ago</p></div></div>
+  <div class="note"><strong>Sin datos disponibles:</strong> desde 2023, X (antes Twitter) cerró el acceso de su API a herramientas de terceros como Metricool para impresiones, interacciones y evolución de seguidores. Por eso todas las cifras de esta pestaña aparecen a 0 — no refleja una caída real de la cuenta, sino la ausencia total de datos.</div>
+  <div class="kpi-grid">
+    <div class="kpi-card neutral"><div class="kpi-label">Seguidores</div><div class="kpi-values"><div class="kpi-val single kpi-num single">Sin datos</div></div></div>
+    <div class="kpi-card neutral"><div class="kpi-label">Tweets</div><div class="kpi-values"><div class="kpi-val single kpi-num single">Sin datos</div></div></div>
+    <div class="kpi-card neutral"><div class="kpi-label">Impresiones</div><div class="kpi-values"><div class="kpi-val single kpi-num single">Sin datos</div></div></div>
+    <div class="kpi-card neutral"><div class="kpi-label">Interacciones</div><div class="kpi-values"><div class="kpi-val single kpi-num single">Sin datos</div></div></div>
+  </div>
+</div>
+
+<!-- YOUTUBE -->
+<div class="panel" id="panel-youtube">
+  <div class="fb-header"><div class="fb-icon">YT</div><div class="fb-info"><h3>YouTube</h3><p>Movistar Team · 1 ene – 16 ago</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card up"><div class="kpi-label">Suscriptores</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">115.0K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">119.0K</span></div></div><span class="kpi-badge up">▲ 3.5%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Visualizaciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">6.38M</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">4.81M</span></div></div><span class="kpi-badge down">▼ 24.6%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Vídeos publicados</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">130</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">97</span></div></div><span class="kpi-badge down">▼ 25.4%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Ingresos estimados</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">$7,873</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">$6,007</span></div></div><span class="kpi-badge down">▼ 23.7%</span></div>
+  </div>
+  <div class="yt-split">
+    <div class="hl-box green"><div class="hl-label">Suscriptores ganados</div><div class="hl-num">4,516</div><div class="hl-desc">2025: 11,544 (−60.9% interanual)</div></div>
+    <div class="hl-box blue"><div class="hl-label">Suscriptores perdidos</div><div class="hl-num">2,098</div><div class="hl-desc">2025: 2,401 (−12.6% interanual)</div></div>
+  </div>
+  <div class="section">
+    <div class="section-title">FUENTES DE TRÁFICO (2026, top 5)</div>
+    <div class="c-list">
+      <div class="c-row"><div class="c-name">Feed suscriptores</div><div class="c-wrap"><div class="c-fill" style="width:41.9%"></div></div><div class="c-pct">41.9%</div></div>
+      <div class="c-row"><div class="c-name">Shorts feed</div><div class="c-wrap"><div class="c-fill" style="width:20.0%"></div></div><div class="c-pct">20.0%</div></div>
+      <div class="c-row"><div class="c-name">Sugeridos</div><div class="c-wrap"><div class="c-fill" style="width:17.3%"></div></div><div class="c-pct">17.3%</div></div>
+      <div class="c-row"><div class="c-name">YouTube Search</div><div class="c-wrap"><div class="c-fill" style="width:7.8%"></div></div><div class="c-pct">7.8%</div></div>
+      <div class="c-row"><div class="c-name">Página del canal</div><div class="c-wrap"><div class="c-fill" style="width:5.4%"></div></div><div class="c-pct">5.4%</div></div>
+    </div>
+  </div>
+  <div class="insight"><strong>Key read:</strong> los suscriptores siguen creciendo (<strong>+3.5%</strong>) pero a un ritmo mucho más lento que en 2025 (ganancia bruta −60.9%), y tanto views (−24.6%) como vídeos publicados (−25.4%) e ingresos (−23.7%) bajan en paralelo — apunta a menos volumen de subida más que a peor rendimiento por vídeo. El feed de suscriptores sigue siendo el canal de descubrimiento dominante (41.9%), por delante de Shorts (20.0%).</div>
+</div>
+
+<!-- TIKTOK -->
+<div class="panel" id="panel-tiktok">
+  <div class="fb-header"><div class="fb-icon">TT</div><div class="fb-info"><h3>TikTok</h3><p>Movistar Team · 1 ene – 16 ago</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card up"><div class="kpi-label">Seguidores</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">82.9K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">93.3K</span></div></div><span class="kpi-badge up">▲ 12.5%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Vídeos publicados</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">164</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">120</span></div></div><span class="kpi-badge down">▼ 26.8%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Visualizaciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">35.4M</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">5.39M</span></div></div><span class="kpi-badge down">▼ 84.8%</span></div>
+    <div class="kpi-card down"><div class="kpi-label">Interacciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">609.0K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">204.7K</span></div></div><span class="kpi-badge down">▼ 66.4%</span></div>
+  </div>
+  <div class="note"><strong>Efecto base importante:</strong> el 5 y el 12 de julio de 2025 TikTok tuvo dos días con más de 10M y 17M de visualizaciones cada uno (vídeos virales puntuales). Ese pico infla artificialmente el acumulado de 2025 y explica la mayor parte de la caída de −84.8% en views y −66.4% en interacciones frente a 2026. Sin esos dos días, el año 2026 muestra un ritmo de consumo más estable.</div>
+  <div class="insight"><strong>Key read:</strong> la comunidad sigue creciendo con fuerza (<strong>+12.5%</strong>, la mayor subida de seguidores de todas las redes) a pesar de publicar menos vídeos (−26.8%). El desplome en views e interacciones responde casi en su totalidad al efecto base de julio 2025 (ver nota), no a una pérdida real de tracción.</div>
+</div>
+
+<!-- LINKEDIN -->
+<div class="panel" id="panel-linkedin">
+  <div class="fb-header"><div class="fb-icon">in</div><div class="fb-info"><h3>LinkedIn</h3><p>Movistar Team · 1 ene – 16 ago</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card up"><div class="kpi-label">Seguidores</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">10.7K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">12.2K</span></div></div><span class="kpi-badge up">▲ 13.7%</span></div>
+    <div class="kpi-card up"><div class="kpi-label">Publicaciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">4</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">14</span></div></div><span class="kpi-badge up">▲ 250%</span></div>
+    <div class="kpi-card up"><div class="kpi-label">Impresiones en posts</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">13.7K</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">38.4K</span></div></div><span class="kpi-badge up">▲ 179.5%</span></div>
+    <div class="kpi-card up"><div class="kpi-label">Interacciones</div><div class="kpi-values"><div class="kpi-val"><span class="kpi-year">2025</span><span class="kpi-num y25">1,384</span></div><div class="kpi-val"><span class="kpi-year">2026</span><span class="kpi-num y26">3,315</span></div></div><span class="kpi-badge up">▲ 139.5%</span></div>
+  </div>
+  <div class="section">
+    <div class="section-title">EVOLUCIÓN AÑO CONTRA AÑO</div>
+    <div class="legend"><div class="legend-item"><span class="legend-dot y25"></span>2025</div><div class="legend-item"><span class="legend-dot y26"></span>2026</div></div>
+    <div class="bar-row double"><div class="bar-label">Likes en posts</div><div class="bar-wrap"><div class="bar-fill y25" style="width:21%">259</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">1,223</div></div><div class="bar-pct up">▲ 372.2%</div></div>
+    <div class="bar-row double"><div class="bar-label">Compartidos</div><div class="bar-wrap"><div class="bar-fill y25" style="width:27%">14</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">52</div></div><div class="bar-pct up">▲ 271.4%</div></div>
+    <div class="bar-row double"><div class="bar-label">Comentarios</div><div class="bar-wrap"><div class="bar-fill y25" style="width:45%">9</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">20</div></div><div class="bar-pct up">▲ 122.2%</div></div>
+    <div class="bar-row double"><div class="bar-label">Clics en posts</div><div class="bar-wrap"><div class="bar-fill y25" style="width:55%">1,102</div></div><div class="bar-wrap"><div class="bar-fill y26" style="width:100%">2,020</div></div><div class="bar-pct up">▲ 83.3%</div></div>
+  </div>
+  <div class="section">
+    <div class="section-title">TOP SECTORES (2026)</div>
+    <div class="c-list">
+      <div class="c-row"><div class="c-name">Entretenimiento</div><div class="c-wrap"><div class="c-fill" style="width:26.4%"></div></div><div class="c-pct">26.4%</div></div>
+      <div class="c-row"><div class="c-name">Serv. profesionales</div><div class="c-wrap"><div class="c-fill" style="width:13.1%"></div></div><div class="c-pct">13.1%</div></div>
+      <div class="c-row"><div class="c-name">Manufactura</div><div class="c-wrap"><div class="c-fill" style="width:10.8%"></div></div><div class="c-pct">10.8%</div></div>
+      <div class="c-row"><div class="c-name">Tecnología/Media</div><div class="c-wrap"><div class="c-fill" style="width:7.7%"></div></div><div class="c-pct">7.7%</div></div>
+      <div class="c-row"><div class="c-name">Serv. financieros</div><div class="c-wrap"><div class="c-fill" style="width:4.2%"></div></div><div class="c-pct">4.2%</div></div>
+    </div>
+  </div>
+  <div class="insight"><strong>Key read:</strong> LinkedIn es, en términos relativos, la red que más crece este año: multiplica por 3,5 sus publicaciones (+250%) y triplica sus interacciones (+139.5%), con un salto de +372% en likes. Sigue siendo una comunidad pequeña (12.2K) pero cada vez más activa, con audiencia dominada por el sector de entretenimiento y servicios profesionales.</div>
+  <div class="note"><strong>Nota:</strong> LinkedIn no ofrece desglose por país en este conector; solo por área metropolitana (ver pestaña Audience).</div>
+</div>
+
+<!-- AUDIENCE -->
+<div class="panel" id="panel-audience">
+  <div class="section-title" style="margin-bottom:14px;">AUDIENCIA POR GÉNERO (actual)</div>
+  <div class="three-col">
+    <div class="aud-card"><div class="aud-title">Instagram</div><div class="g-bars">
+      <div class="g-row"><div class="g-label">Hombres</div><div class="g-wrap"><div class="g-fill male" style="width:72.2%">72.2%</div></div></div>
+      <div class="g-row"><div class="g-label">Mujeres</div><div class="g-wrap"><div class="g-fill female" style="width:11.5%">11.5%</div></div></div>
+    </div></div>
+    <div class="aud-card"><div class="aud-title">TikTok</div><div class="g-bars">
+      <div class="g-row"><div class="g-label">Hombres</div><div class="g-wrap"><div class="g-fill male" style="width:91.0%">91.0%</div></div></div>
+      <div class="g-row"><div class="g-label">Mujeres</div><div class="g-wrap"><div class="g-fill female" style="width:8.7%">8.7%</div></div></div>
+    </div></div>
+    <div class="aud-card"><div class="aud-title">YouTube</div><div class="g-bars">
+      <div class="g-row"><div class="g-label">Hombres</div><div class="g-wrap"><div class="g-fill male" style="width:74%">74.0%</div></div></div>
+      <div class="g-row"><div class="g-label">Mujeres</div><div class="g-wrap"><div class="g-fill female" style="width:26%">26.0%</div></div></div>
+    </div></div>
+  </div>
+
+  <div class="section-title" style="margin:20px 0 14px;">TOP PAÍSES POR PLATAFORMA (actual)</div>
+  <div class="three-col">
+    <div class="aud-card"><div class="aud-title">Instagram</div><div class="c-list">
+      <div class="c-row"><div class="c-name">España</div><div class="c-wrap"><div class="c-fill" style="width:22.1%"></div></div><div class="c-pct">22.1%</div></div>
+      <div class="c-row"><div class="c-name">Colombia</div><div class="c-wrap"><div class="c-fill" style="width:15.7%"></div></div><div class="c-pct">15.7%</div></div>
+      <div class="c-row"><div class="c-name">Brasil</div><div class="c-wrap"><div class="c-fill" style="width:6.8%"></div></div><div class="c-pct">6.8%</div></div>
+      <div class="c-row"><div class="c-name">Italia</div><div class="c-wrap"><div class="c-fill" style="width:5.5%"></div></div><div class="c-pct">5.5%</div></div>
+      <div class="c-row"><div class="c-name">EE.UU.</div><div class="c-wrap"><div class="c-fill" style="width:5.4%"></div></div><div class="c-pct">5.4%</div></div>
+    </div></div>
+    <div class="aud-card"><div class="aud-title">Facebook</div><div class="c-list">
+      <div class="c-row"><div class="c-name">España</div><div class="c-wrap"><div class="c-fill" style="width:63.0%"></div></div><div class="c-pct">63.0%</div></div>
+      <div class="c-row"><div class="c-name">México</div><div class="c-wrap"><div class="c-fill" style="width:4.7%"></div></div><div class="c-pct">4.7%</div></div>
+      <div class="c-row"><div class="c-name">Colombia</div><div class="c-wrap"><div class="c-fill" style="width:4.3%"></div></div><div class="c-pct">4.3%</div></div>
+      <div class="c-row"><div class="c-name">EE.UU.</div><div class="c-wrap"><div class="c-fill" style="width:3.3%"></div></div><div class="c-pct">3.3%</div></div>
+      <div class="c-row"><div class="c-name">Francia</div><div class="c-wrap"><div class="c-fill" style="width:2.8%"></div></div><div class="c-pct">2.8%</div></div>
+    </div></div>
+    <div class="aud-card"><div class="aud-title">YouTube</div><div class="c-list">
+      <div class="c-row"><div class="c-name">Colombia</div><div class="c-wrap"><div class="c-fill" style="width:21.9%"></div></div><div class="c-pct">21.9%</div></div>
+      <div class="c-row"><div class="c-name">España</div><div class="c-wrap"><div class="c-fill" style="width:15.4%"></div></div><div class="c-pct">15.4%</div></div>
+      <div class="c-row"><div class="c-name">Indonesia</div><div class="c-wrap"><div class="c-fill" style="width:9.0%"></div></div><div class="c-pct">9.0%</div></div>
+      <div class="c-row"><div class="c-name">Costa Rica</div><div class="c-wrap"><div class="c-fill" style="width:8.2%"></div></div><div class="c-pct">8.2%</div></div>
+      <div class="c-row"><div class="c-name">Ecuador</div><div class="c-wrap"><div class="c-fill" style="width:6.8%"></div></div><div class="c-pct">6.8%</div></div>
+    </div></div>
+  </div>
+
+  <div class="section-title" style="margin:20px 0 14px;">LINKEDIN · TOP ÁREAS METRO (actual)</div>
+  <div class="aud-card" style="max-width:420px;"><div class="c-list">
+    <div class="c-row"><div class="c-name">Madrid</div><div class="c-wrap"><div class="c-fill" style="width:9.4%"></div></div><div class="c-pct">9.4%</div></div>
+    <div class="c-row"><div class="c-name">Barcelona</div><div class="c-wrap"><div class="c-fill" style="width:3.7%"></div></div><div class="c-pct">3.7%</div></div>
+    <div class="c-row"><div class="c-name">Bogotá D.C.</div><div class="c-wrap"><div class="c-fill" style="width:2.8%"></div></div><div class="c-pct">2.8%</div></div>
+    <div class="c-row"><div class="c-name">Buenos Aires</div><div class="c-wrap"><div class="c-fill" style="width:2.5%"></div></div><div class="c-pct">2.5%</div></div>
+    <div class="c-row"><div class="c-name">Santiago</div><div class="c-wrap"><div class="c-fill" style="width:2.0%"></div></div><div class="c-pct">2.0%</div></div>
+  </div></div>
+
+  <div class="insight" style="margin-top:16px;"><strong>Key read:</strong> la audiencia es mayoritariamente masculina en todas las redes (72–91%), más marcada en TikTok (91.0%) que en YouTube (74.0%). España lidera en Instagram y Facebook, pero en YouTube la comunidad se reparte más por Latinoamérica, con Colombia como primer país (21.9%).</div>
+</div>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+</script>
+</body>
+</html>
